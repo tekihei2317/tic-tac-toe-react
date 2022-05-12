@@ -1,34 +1,65 @@
 import { useState } from "react";
 import "./App.css";
 
-type SquareProps = { value: number };
-const Square: React.FC<SquareProps> = ({ value }) => {
-  return <div className="square">{value}</div>;
+type SquareProps = { value: string | null; onClick: () => void };
+const Square: React.FC<SquareProps> = ({ value, onClick }) => {
+  return (
+    <button className="square" onClick={onClick}>
+      {value}
+    </button>
+  );
 };
 
-const App: React.FC = () => {
-  const [status, setStatus] = useState("Next Player: X");
+type Player = "X" | "O";
+
+function calculateNextPlayer(player: Player) {
+  return player === "X" ? "O" : "X";
+}
+
+const Board: React.FC = () => {
+  type BoardState = {
+    squares: (string | null)[];
+    nextPlayer: Player;
+  };
+  const [state, setState] = useState<BoardState>({
+    squares: Array(9).fill(null),
+    nextPlayer: "X",
+  });
+
+  const handleClick = (i: number) => {
+    const squares = state.squares.slice();
+    squares[i] = state.nextPlayer;
+    setState({ squares, nextPlayer: calculateNextPlayer(state.nextPlayer) });
+  };
+
+  const renderSquare = (i: number) => {
+    return <Square value={state.squares[i]} onClick={() => handleClick(i)} />;
+  };
 
   return (
     <div>
-      <div className="status">{status}</div>
+      <div className="status">Next Player: {state.nextPlayer}</div>
       <div className="board-row">
-        <Square value={1} />
-        <Square value={2} />
-        <Square value={3} />
+        {renderSquare(0)}
+        {renderSquare(1)}
+        {renderSquare(2)}
       </div>
       <div className="board-row">
-        <Square value={4} />
-        <Square value={5} />
-        <Square value={6} />
+        {renderSquare(3)}
+        {renderSquare(4)}
+        {renderSquare(5)}
       </div>
       <div className="board-row">
-        <Square value={7} />
-        <Square value={8} />
-        <Square value={9} />
+        {renderSquare(6)}
+        {renderSquare(7)}
+        {renderSquare(8)}
       </div>
     </div>
   );
+};
+
+const App: React.FC = () => {
+  return <Board />;
 };
 
 export default App;
