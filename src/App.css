@@ -2,6 +2,11 @@
   margin-bottom: 10px;
 }
 
+.game {
+  display: flex;
+  gap: 20px;
+}
+
 .board-row {
   display: flex;
 }
